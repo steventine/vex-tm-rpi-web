@@ -205,7 +205,7 @@ function App() {
             className="fullscreen-button"
             title={isFullscreen ? 'Exit Fullscreen' : 'Enter Fullscreen'}
           >
-            {isFullscreen ? '⤓' : '⤢'}
+            {isFullscreen ? '×' : '⤢'}
           </button>
         </div>
       </div>
