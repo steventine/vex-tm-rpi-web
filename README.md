@@ -115,3 +115,5 @@ The static files in the `dist` folder can also be deployed to:
 - Netlify
 - Vercel
 - Any web server capable of serving static files
+
+NOTE: This application was created primarily with help from [Cursor](https://cursor.com/).
