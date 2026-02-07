@@ -174,3 +174,30 @@
   background-color: rgba(0, 0, 0, 0.9);
 }
 
+.fps-overlay {
+  position: absolute;
+  bottom: 1rem;
+  left: 1rem;
+  z-index: 5;
+  background-color: rgba(0, 0, 0, 0.6);
+  color: #fff;
+  padding: 0.5rem 0.75rem;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  font-family: monospace;
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: opacity 0.3s ease-in-out;
+}
+
+.fps-overlay.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.fps-overlay.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+

@@ -12,12 +12,14 @@ function App() {
   const [isLoading, setIsLoading] = useState(false)
   const [showControls, setShowControls] = useState(false)
   const [showCursor, setShowCursor] = useState(true)
+  const [fps, setFps] = useState(0)
   const isFetchingRef = useRef(false)
   const shouldContinueRef = useRef(false)
   const currentUrlRef = useRef('')
   const imgElementRef = useRef(null)
   const mouseTimeoutRef = useRef(null)
   const fetchTimeoutRef = useRef(null)
+  const lastImageLoadTimeRef = useRef(null)
 
   // Load IP address from URL query parameter or localStorage on mount
   useEffect(() => {
@@ -61,6 +63,10 @@ function App() {
       fetchTimeoutRef.current = null
     }
     
+    // Reset FPS tracking
+    setFps(0)
+    lastImageLoadTimeRef.current = null
+    
     setError('')
     const url = `http://${ip}/screen.png`
     currentUrlRef.current = url
@@ -97,6 +103,18 @@ function App() {
           setIsLoading(false)
           setError('')
           isFetchingRef.current = false
+          
+          // Calculate FPS
+          const now = Date.now()
+          if (lastImageLoadTimeRef.current !== null) {
+            const timeDiff = (now - lastImageLoadTimeRef.current) / 1000 // Convert to seconds
+            if (timeDiff > 0) {
+              const calculatedFps = 1 / timeDiff
+              setFps(calculatedFps)
+            }
+          }
+          lastImageLoadTimeRef.current = now
+          
           resolve()
         }
         
@@ -303,6 +321,11 @@ function App() {
             {isFullscreen ? '×' : '⤢'}
           </button>
         </div>
+        {displayIp && (
+          <div className={`fps-overlay ${showControls ? 'visible' : 'hidden'}`}>
+            {fps.toFixed(1)} FPS
+          </div>
+        )}
       </div>
     </div>
   )
