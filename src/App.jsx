@@ -17,6 +17,7 @@ function App() {
   const currentUrlRef = useRef('')
   const imgElementRef = useRef(null)
   const mouseTimeoutRef = useRef(null)
+  const fetchTimeoutRef = useRef(null)
 
   // Load IP address from URL query parameter or localStorage on mount
   useEffect(() => {
@@ -52,6 +53,13 @@ function App() {
   const startFetching = (ip) => {
     // Stop any existing fetching
     shouldContinueRef.current = false
+    isFetchingRef.current = false
+    
+    // Clear any pending fetch timeouts
+    if (fetchTimeoutRef.current) {
+      clearTimeout(fetchTimeoutRef.current)
+      fetchTimeoutRef.current = null
+    }
     
     setError('')
     const url = `http://${ip}/screen.png`
@@ -115,7 +123,14 @@ function App() {
       }
       // Retry after a short delay on error to avoid hammering the server
       if (shouldContinueRef.current && currentUrlRef.current === url) {
-        setTimeout(() => fetchImage(url), 100)
+        // Clear any existing timeout before setting a new one
+        if (fetchTimeoutRef.current) {
+          clearTimeout(fetchTimeoutRef.current)
+        }
+        fetchTimeoutRef.current = setTimeout(() => {
+          fetchTimeoutRef.current = null
+          fetchImage(url)
+        }, 100)
       }
     }
   }
@@ -151,6 +166,12 @@ function App() {
 
   const handleChangeIp = () => {
     shouldContinueRef.current = false
+    isFetchingRef.current = false
+    // Clear any pending fetch timeouts
+    if (fetchTimeoutRef.current) {
+      clearTimeout(fetchTimeoutRef.current)
+      fetchTimeoutRef.current = null
+    }
     // Preserve the current IP address in the input field
     setIpAddress(displayIp)
     setDisplayIp('')
@@ -250,6 +271,12 @@ function App() {
             <button
               onClick={() => {
                 shouldContinueRef.current = false
+                isFetchingRef.current = false
+                // Clear any pending fetch timeouts
+                if (fetchTimeoutRef.current) {
+                  clearTimeout(fetchTimeoutRef.current)
+                  fetchTimeoutRef.current = null
+                }
                 setDisplayIp('')
                 setImageUrl('')
                 setError('')
