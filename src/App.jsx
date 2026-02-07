@@ -149,6 +149,15 @@ function App() {
     }
   }
 
+  const handleChangeIp = () => {
+    shouldContinueRef.current = false
+    // Preserve the current IP address in the input field
+    setIpAddress(displayIp)
+    setDisplayIp('')
+    setImageUrl('')
+    setError('')
+  }
+
   // Listen for fullscreen changes
   useEffect(() => {
     const handleFullscreenChange = () => {
@@ -252,6 +261,13 @@ function App() {
           </div>
         )}
         <div className={`controls ${showControls ? 'visible' : 'hidden'}`}>
+          <button
+            onClick={handleChangeIp}
+            className="config-button"
+            title="Change IP Address"
+          >
+            ⚙
+          </button>
           <button
             onClick={handleFullscreen}
             className="fullscreen-button"
