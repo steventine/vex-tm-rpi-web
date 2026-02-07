@@ -15,13 +15,27 @@ function App() {
   const currentUrlRef = useRef('')
   const imgElementRef = useRef(null)
 
-  // Load saved IP address on mount
+  // Load IP address from URL query parameter or localStorage on mount
   useEffect(() => {
-    const savedIp = localStorage.getItem(IP_STORAGE_KEY)
-    if (savedIp) {
-      setIpAddress(savedIp)
-      setDisplayIp(savedIp)
-      startFetching(savedIp)
+    // Check for IP in URL query parameter first
+    const urlParams = new URLSearchParams(window.location.search)
+    const ipFromUrl = urlParams.get('ip')
+    
+    if (ipFromUrl) {
+      // Use IP from URL and save it
+      const trimmedIp = ipFromUrl.trim()
+      setIpAddress(trimmedIp)
+      setDisplayIp(trimmedIp)
+      localStorage.setItem(IP_STORAGE_KEY, trimmedIp)
+      startFetching(trimmedIp)
+    } else {
+      // Fall back to saved IP from localStorage
+      const savedIp = localStorage.getItem(IP_STORAGE_KEY)
+      if (savedIp) {
+        setIpAddress(savedIp)
+        setDisplayIp(savedIp)
+        startFetching(savedIp)
+      }
     }
   }, [])
 
@@ -106,10 +120,15 @@ function App() {
   const handleSubmit = (e) => {
     e.preventDefault()
     if (ipAddress.trim()) {
+      const trimmedIp = ipAddress.trim()
       // Save to localStorage
-      localStorage.setItem(IP_STORAGE_KEY, ipAddress.trim())
-      setDisplayIp(ipAddress.trim())
-      startFetching(ipAddress.trim())
+      localStorage.setItem(IP_STORAGE_KEY, trimmedIp)
+      setDisplayIp(trimmedIp)
+      // Update URL with query parameter
+      const url = new URL(window.location.href)
+      url.searchParams.set('ip', trimmedIp)
+      window.history.pushState({}, '', url)
+      startFetching(trimmedIp)
     }
   }
 

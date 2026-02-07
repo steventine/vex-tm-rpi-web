@@ -58,9 +58,18 @@ npm run preview
 
 ## Configuration
 
-* When the web page first starts, it asks the user for the IP address of the Raspberry Pi
+The IP address can be provided in two ways:
 
-* Once entered, the page will attempt to access the `http://<RPi IP>/screen.png` endpoint from the Raspberry Pi
+1. **URL Query Parameter** (recommended for sharing): Add `?ip=<RPi IP>` to the URL
+   - Example: `https://your-site.com/?ip=192.168.1.100`
+   - When accessed with a query parameter, the application will automatically connect to the specified IP address
+   - This is ideal for sharing links with users - they can simply click the link and it will start working immediately
+
+2. **Manual Entry**: When the web page first starts without a query parameter, it asks the user for the IP address of the Raspberry Pi
+   - The entered IP address is saved to the browser's local storage for future visits
+   - The URL is automatically updated with the query parameter when an IP is entered manually
+
+Once an IP address is provided (via URL or manual entry), the page will attempt to access the `http://<RPi IP>/screen.png` endpoint from the Raspberry Pi:
   * If successful, it displays the PNG in full viewport mode (filling the entire browser viewport) and continuously fetches new images as fast as possible (immediately after each image finishes loading). The application includes a button to enter browser full-screen mode so the PNG will take up the entire screen.
   * If unsuccessful, it reports an error to the user
 
