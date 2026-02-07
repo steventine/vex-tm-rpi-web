@@ -77,6 +77,30 @@ Once an IP address is provided (via URL or manual entry), the page will attempt 
 
 After building the application with `npm run build`, the `dist` folder contains all static files that can be deployed to any web hosting service.
 
+### GitHub Pages Deployment
+
+This repository includes a GitHub Actions workflow that automatically builds and deploys the site to GitHub Pages.
+
+**Setup Instructions:**
+
+1. Push this repository to GitHub
+2. Go to your repository's **Settings** → **Pages**
+3. Under **Source**, select **GitHub Actions**
+4. The workflow will automatically run on pushes to the `main` branch
+5. Your site will be available at `https://<username>.github.io/<repository-name>/`
+
+**Manual Deployment:**
+
+You can also manually trigger the deployment workflow:
+1. Go to the **Actions** tab in your repository
+2. Select **Deploy to GitHub Pages** workflow
+3. Click **Run workflow**
+
+**Using the Deployed Site:**
+
+Once deployed, you can share links with the IP address query parameter:
+- `https://<username>.github.io/<repository-name>/?ip=192.168.1.100`
+
 ### AWS S3 Deployment
 
 1. Build the application: `npm run build`
@@ -88,7 +112,6 @@ After building the application with `npm run build`, the `dist` folder contains 
 ### Other Hosting Options
 
 The static files in the `dist` folder can also be deployed to:
-- GitHub Pages
 - Netlify
 - Vercel
 - Any web server capable of serving static files
