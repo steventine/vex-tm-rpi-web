@@ -10,10 +10,13 @@ function App() {
   const [error, setError] = useState('')
   const [isFullscreen, setIsFullscreen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const [showControls, setShowControls] = useState(false)
+  const [showCursor, setShowCursor] = useState(true)
   const isFetchingRef = useRef(false)
   const shouldContinueRef = useRef(false)
   const currentUrlRef = useRef('')
   const imgElementRef = useRef(null)
+  const mouseTimeoutRef = useRef(null)
 
   // Load IP address from URL query parameter or localStorage on mount
   useEffect(() => {
@@ -158,6 +161,36 @@ function App() {
     }
   }, [])
 
+  // Show controls on mouse movement, hide after inactivity
+  useEffect(() => {
+    if (!displayIp) return
+
+    const handleMouseMove = () => {
+      setShowControls(true)
+      setShowCursor(true)  // Show cursor on movement
+      
+      // Clear existing timeout
+      if (mouseTimeoutRef.current) {
+        clearTimeout(mouseTimeoutRef.current)
+      }
+      
+      // Hide controls and cursor after 2 seconds of inactivity
+      mouseTimeoutRef.current = setTimeout(() => {
+        setShowControls(false)
+        setShowCursor(false)  // Hide cursor after inactivity
+      }, 2000)
+    }
+
+    window.addEventListener('mousemove', handleMouseMove)
+    
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove)
+      if (mouseTimeoutRef.current) {
+        clearTimeout(mouseTimeoutRef.current)
+      }
+    }
+  }, [displayIp])
+
   // If no IP is set, show input form
   if (!displayIp) {
     return (
@@ -187,7 +220,7 @@ function App() {
   // Display mode
   return (
     <div className="app-container">
-      <div className="display-container">
+      <div className={`display-container ${!showCursor ? 'cursor-hidden' : ''}`}>
         {imageUrl && (
           <img
             ref={imgElementRef}
@@ -218,7 +251,7 @@ function App() {
             </button>
           </div>
         )}
-        <div className="controls">
+        <div className={`controls ${showControls ? 'visible' : 'hidden'}`}>
           <button
             onClick={handleFullscreen}
             className="fullscreen-button"
