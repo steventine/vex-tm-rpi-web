@@ -4,6 +4,20 @@ The VEX Tournament Manager Raspberry Pi is a great tool to have pit displays loc
 
 The project aims to provide a static web page using ReactJS that can accept the IP address of a VEX TM Raspberry Pi and use the `http://<RPi IP>/screen.png` endpoint to continuously fetch the latest image and display it full-screen in the browser.
 
+## Screenshots
+
+### Configuration Screen
+![Configuration Screen](docs/screenshots/configuration-screen.png)
+*The initial screen where users enter the IP address of their VEX TM Raspberry Pi*
+
+### Display Screen
+![Display Screen](docs/screenshots/display-screen.png)
+*The main display showing the VEX TM screen with controls visible (fullscreen button, configuration button, and FPS counter)*
+
+### Full Screen Mode
+![Full Screen Mode](docs/screenshots/fullscreen-mode.png)
+*The application in browser full-screen mode for maximum display area*
+
 ## Features
 
 - Simple IP address configuration
