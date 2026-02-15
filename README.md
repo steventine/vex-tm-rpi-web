@@ -6,7 +6,7 @@ The project aims to provide a static web page using ReactJS that can accept the 
 
 ## Hosted Page
 
-The Remote Display Client can be accessed via this repository's GitHub Site at <https://steventine.github.io/vex-tm-rpi-web>.  If you know the IP address and want to skip the config screen, use a link that includes the IP address, like <https://steventine.github.io/vex-tm-rpi-web/?ip=192.168.1.121>
+The Remote Display Client can be accessed via this repository's GitHub Site at <https://steventine.github.io/vex-tm-rpi-web> or <https://vextm.tinefamily.com>.  If you know the IP address and want to skip the config screen, use a link that includes the IP address, like <https://steventine.github.io/vex-tm-rpi-web/?ip=192.168.1.121> or <https://vextm.tinefamily.com/?ip=192.168.1.121>
 
 ## Screenshots
 
