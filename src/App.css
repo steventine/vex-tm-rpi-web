@@ -1,3 +1,17 @@
+/* ── App root ──────────────────────────────────────────────────── */
+.app-root {
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+  background-color: #000;
+  overflow: hidden;
+}
+
+.app-root.cursor-hidden {
+  cursor: none;
+}
+
+/* ── Legacy form (slot-0 config fallback) ──────────────────────── */
 .app-container {
   width: 100vw;
   height: 100vh;
@@ -36,6 +50,7 @@
   color: #fff;
   margin-bottom: 1rem;
   text-align: center;
+  box-sizing: border-box;
 }
 
 .ip-input:focus {
@@ -56,88 +71,193 @@
   transition: background-color 0.2s;
 }
 
-.connect-button:hover {
-  background-color: #3a8eef;
-}
+.connect-button:hover { background-color: #3a8eef; }
+.connect-button:active { background-color: #2a7edf; }
 
-.connect-button:active {
-  background-color: #2a7edf;
-}
-
-.display-container {
+/* ── Dashboard grid ────────────────────────────────────────────── */
+.dashboard-grid {
   width: 100vw;
   height: 100vh;
+  display: grid;
+  gap: 2px;
+  background-color: #111;
+}
+
+.dashboard-grid.layout-1 {
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr;
+}
+
+.dashboard-grid.layout-4 {
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+}
+
+.dashboard-grid.layout-16 {
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(4, 1fr);
+}
+
+.dashboard-grid.layout-zoomed {
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr;
+}
+
+/* ── Cell ──────────────────────────────────────────────────────── */
+.cell {
   position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  overflow: hidden;
   background-color: #000;
 }
 
-.display-container.cursor-hidden {
-  cursor: none;
+.cell.zoomable {
+  cursor: pointer;
 }
 
-.screen-image {
-  max-width: 100vw;
-  max-height: 100vh;
+/* Red outline for configured cells with connection errors */
+.cell.has-error {
+  outline: 2px solid #ff3333;
+  outline-offset: -2px;
+}
+
+/* Unconfigured cells: no outline */
+.cell.unconfigured {
+  background-color: #0a0a0a;
+}
+
+/* Cell image fills the cell */
+.cell-image {
   width: 100%;
   height: 100%;
   object-fit: contain;
   display: block;
 }
 
-.loading-message {
-  color: #fff;
-  font-size: 1.5rem;
-  text-align: center;
-}
-
-.error-overlay {
+/* Loading / error text inside a cell */
+.cell-loading {
   position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: rgba(0, 0, 0, 0.9);
-  padding: 2rem;
-  border-radius: 8px;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #666;
+  font-size: 0.85rem;
+}
+
+.cell-error {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  color: #ff5555;
+  font-size: 0.8rem;
+  padding: 0.5rem;
   text-align: center;
-  max-width: 500px;
-  width: 90%;
-  z-index: 10;
 }
 
-.error-message {
-  color: #ff4444;
-  margin-bottom: 1rem;
-  font-size: 1rem;
-  line-height: 1.5;
+.cell-error-ip {
+  color: #888;
+  font-size: 0.7rem;
+  font-family: monospace;
 }
 
-.retry-button {
-  padding: 0.75rem 1.5rem;
-  font-size: 1rem;
-  background-color: #4a9eff;
+/* ── Cell gear (CSS-only hover) ────────────────────────────────── */
+.cell-gear {
+  position: absolute;
+  top: 0.4rem;
+  right: 0.4rem;
+  background-color: rgba(0, 0, 0, 0.65);
   color: #fff;
-  border: none;
+  border: 1px solid rgba(255, 255, 255, 0.25);
   border-radius: 4px;
+  padding: 0.3rem 0.5rem;
+  font-size: 1rem;
   cursor: pointer;
-  font-weight: 600;
-  transition: background-color 0.2s;
+  opacity: 0;
+  transition: opacity 0.2s;
+  pointer-events: none;
+  z-index: 2;
+  backdrop-filter: blur(4px);
 }
 
-.retry-button:hover {
-  background-color: #3a8eef;
+.cell:hover .cell-gear {
+  opacity: 1;
+  pointer-events: auto;
 }
 
-.controls {
+.cell-gear:hover {
+  background-color: rgba(0, 0, 0, 0.85);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+/* ── Cell label ────────────────────────────────────────────────── */
+.cell-label {
   position: absolute;
+  bottom: 0.4rem;
+  left: 0.4rem;
+  background-color: rgba(0, 0, 0, 0.65);
+  color: #fff;
+  padding: 0.2rem 0.5rem;
+  border-radius: 3px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  pointer-events: none;
+  z-index: 2;
+  backdrop-filter: blur(4px);
+  max-width: calc(100% - 2rem);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── Cell add prompt (unconfigured hover) ──────────────────────── */
+.cell-add-prompt {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.cell-add-prompt.visible {
+  opacity: 1;
+}
+
+.cell-add-icon {
+  font-size: 2.5rem;
+  color: rgba(255, 255, 255, 0.5);
+  line-height: 1;
+}
+
+.cell-add-text {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.4);
+  letter-spacing: 0.05em;
+}
+
+.cell-add-prompt:hover .cell-add-icon,
+.cell-add-prompt:hover .cell-add-text {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* ── Controls overlay (top-right) ──────────────────────────────── */
+.controls {
+  position: fixed;
   top: 1rem;
   right: 1rem;
-  z-index: 5;
-  transition: opacity 0.3s ease-in-out;
+  z-index: 10;
   display: flex;
+  align-items: center;
   gap: 0.5rem;
+  transition: opacity 0.3s ease-in-out;
 }
 
 .controls.visible {
@@ -156,8 +276,8 @@
   color: #fff;
   border: 2px solid rgba(255, 255, 255, 0.3);
   border-radius: 4px;
-  padding: 0.75rem 1rem;
-  font-size: 1.5rem;
+  padding: 0.6rem 0.9rem;
+  font-size: 1.2rem;
   cursor: pointer;
   transition: all 0.2s;
   backdrop-filter: blur(4px);
@@ -165,38 +285,209 @@
 
 .config-button:hover,
 .fullscreen-button:hover {
-  background-color: rgba(0, 0, 0, 0.8);
-  border-color: rgba(255, 255, 255, 0.5);
+  background-color: rgba(0, 0, 0, 0.85);
+  border-color: rgba(255, 255, 255, 0.55);
 }
 
-.config-button:active,
-.fullscreen-button:active {
-  background-color: rgba(0, 0, 0, 0.9);
+/* ── Layout switcher buttons ───────────────────────────────────── */
+.layout-switcher {
+  display: flex;
+  gap: 0.25rem;
 }
 
-.fps-overlay {
-  position: absolute;
-  bottom: 1rem;
-  left: 1rem;
-  z-index: 5;
+.layout-button {
   background-color: rgba(0, 0, 0, 0.6);
-  color: #fff;
-  padding: 0.5rem 0.75rem;
+  color: rgba(255, 255, 255, 0.6);
+  border: 2px solid rgba(255, 255, 255, 0.2);
   border-radius: 4px;
-  font-size: 0.9rem;
-  font-weight: 600;
-  font-family: monospace;
+  padding: 0.5rem 0.7rem;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.2s;
   backdrop-filter: blur(4px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  line-height: 1;
+}
+
+.layout-button:hover {
+  background-color: rgba(0, 0, 0, 0.85);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.45);
+}
+
+.layout-button.active {
+  background-color: rgba(74, 158, 255, 0.4);
+  color: #fff;
+  border-color: #4a9eff;
+}
+
+/* ── Guest banner (top-left) ───────────────────────────────────── */
+.guest-banner {
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background-color: rgba(0, 0, 0, 0.7);
+  border: 1px solid rgba(255, 200, 0, 0.5);
+  border-radius: 4px;
+  padding: 0.5rem 0.75rem;
+  backdrop-filter: blur(4px);
   transition: opacity 0.3s ease-in-out;
 }
 
-.fps-overlay.visible {
+.guest-banner.visible {
   opacity: 1;
   pointer-events: auto;
 }
 
-.fps-overlay.hidden {
+.guest-banner.hidden {
   opacity: 0;
   pointer-events: none;
+}
+
+.guest-banner-text {
+  color: #ffc800;
+  font-size: 0.85rem;
+  font-family: monospace;
+}
+
+.guest-exit-button {
+  background-color: rgba(255, 200, 0, 0.2);
+  color: #ffc800;
+  border: 1px solid rgba(255, 200, 0, 0.5);
+  border-radius: 3px;
+  padding: 0.25rem 0.6rem;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.guest-exit-button:hover {
+  background-color: rgba(255, 200, 0, 0.35);
+}
+
+/* ── Modals ────────────────────────────────────────────────────── */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.modal-panel {
+  background-color: #1a1a1a;
+  border: 1px solid #333;
+  border-radius: 8px;
+  padding: 1.5rem;
+  width: 90%;
+  max-width: 420px;
+}
+
+.modal-title {
+  color: #fff;
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 1.25rem;
+}
+
+.modal-field {
+  margin-bottom: 1rem;
+}
+
+.modal-label {
+  display: block;
+  color: #aaa;
+  font-size: 0.85rem;
+  margin-bottom: 0.4rem;
+}
+
+.modal-hint {
+  color: #666;
+  font-size: 0.8rem;
+  margin-top: 0.5rem;
+}
+
+.modal-checkbox-field {
+  margin-bottom: 1.25rem;
+}
+
+.modal-checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: #ccc;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.modal-checkbox {
+  width: 1rem;
+  height: 1rem;
+  cursor: pointer;
+  accent-color: #4a9eff;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1.25rem;
+}
+
+.modal-actions .connect-button {
+  flex: 1;
+}
+
+.cancel-button {
+  flex: 1;
+  padding: 0.75rem;
+  font-size: 1rem;
+  background-color: transparent;
+  color: #aaa;
+  border: 2px solid #333;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.cancel-button:hover {
+  background-color: #222;
+  color: #fff;
+  border-color: #555;
+}
+
+.delete-button {
+  padding: 0.75rem;
+  font-size: 1rem;
+  background-color: transparent;
+  color: #ff5555;
+  border: 2px solid #ff3333;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.delete-button:hover {
+  background-color: rgba(255, 50, 50, 0.15);
+}
+
+/* ── FPS slider ────────────────────────────────────────────────── */
+.fps-slider {
+  width: 100%;
+  accent-color: #4a9eff;
+  cursor: pointer;
+  margin: 0.4rem 0 0.2rem;
+}
+
+.fps-slider-labels {
+  display: flex;
+  justify-content: space-between;
+  color: #666;
+  font-size: 0.75rem;
 }

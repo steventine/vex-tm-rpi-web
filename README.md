@@ -1,12 +1,33 @@
 # VEX Tournament Manager Raspberry Pi Remote Display Client
 
-The VEX Tournament Manager Raspberry Pi is a great tool to have pit displays located at any TV in a VEX robotics competition venue. However, it's sometimes not feasible to get an HDMI connection to all the devices, while all the devices may be capable of displaying a full-screen view from a web browser.
+The VEX Tournament Manager Raspberry Pi is a great tool to have pit displays located at any TVs in a VEX robotics competition venue. However, it's sometimes not feasible to get an HDMI connection to all the TVs, while all the TVs may be capable of displaying a full-screen view from a web browser (like via an attached computer or smartboard).
 
-The project aims to provide a static web page using ReactJS that can accept the IP address of a VEX TM Raspberry Pi and use the `http://<RPi IP>/screen.png` endpoint to continuously fetch the latest image and display it full-screen in the browser.
+This project provides a static web page using ReactJS that connects to one or more VEX TM Raspberry Pis and continuously fetches and displays their screens via the `http://<RPi IP>/screen.png` endpoint.  This has two primary uses:
+1. Display a single Raspberry Pi as a remote display using a web browser
+2. Monitor up to 16 RPis simultaneously in a configurable grid layout.
 
 ## Hosted Page
 
-The Remote Display Client can be accessed via this repository's GitHub Site at <https://vextm.tinefamily.com> (or <https://steventine.github.io/vex-tm-rpi-web>).  If you know the IP address of your Raspberry Pi and want to skip the config screen, use a link that includes the IP address, like <https://vextm.tinefamily.com/?ip=192.168.1.121>
+The Remote Display Client can be accessed via this repository's GitHub Site at <https://vextm.tinefamily.com> (or <https://steventine.github.io/vex-tm-rpi-web>).
+
+**NOTE:** This is a static web page that has no backend component.  Once loaded in the browser, you don't even need an Internet connection to make it work.
+
+To jump directly to a single RPi without any configuration, add its IP address as a query parameter:
+`https://vextm.tinefamily.com/?ip=192.168.1.121`
+
+## Features
+
+- **Multiple layout modes** — 1-up, 2×2 (4-up), and 4×4 (16-up) grid views
+- **Up to 16 simultaneous RPi connections**, each independently polled
+- **Per-cell configuration** — set an IP address and optional label for each cell
+- **Zoom** — click any cell in a grid view to expand it to full screen; click a layout button to return
+- **FPS budget** — configurable global FPS cap (1–16) split equally across active cells; e.g. 4-up with 4 cells uses 4 FPS each at a 16 FPS budget
+- **Labels** — optional name per cell, shown always or only on hover (configurable)
+- **Single RPi Mode** — loading the page with `?ip=<address>` opens a session-only single-cell view without affecting saved configuration
+- **Persistent configuration** — layout, IP addresses, labels, and settings are all saved to browser local storage and restored on page refresh
+- **Full-screen mode** — available at any time regardless of layout
+- **Health indicator** — configured cells with connection errors show a red outline
+- **Automatic reconnection** — cells retry on error without user intervention
 
 ## Screenshots
 
@@ -22,23 +43,64 @@ The Remote Display Client can be accessed via this repository's GitHub Site at <
 ![Full Screen Mode](docs/screenshots/fullscreen-mode.png)
 *The application in browser full-screen mode for maximum display area*
 
-## Features
-
-- Simple IP address configuration
-- Full viewport display mode (fills the entire browser viewport)
-- Browser full-screen mode support with dedicated button
-- Automatic screen refresh as fast as possible (Waits for complete image transfer before rendering to prevent partial displays during slow network conditions, then immediately fetches the next image)
-- Error handling for connection issues
-
 ## Requirements
 
 - Modern web browser (Chrome or Edge recommended) with JavaScript enabled
-- Network access to the VEX TM Raspberry Pi
-- The browser must be on the same network as the Raspberry Pi
+- Network access to the VEX TM Raspberry Pi(s)
+- The browser must be on the same network as the Raspberry Pi(s)
 
-For development:
+## Usage
+
+### Layout Selection
+
+Use the layout buttons in the top-right controls overlay to switch between views:
+
+| Button | Layout | Cells |
+|--------|--------|-------|
+| ▣ | 1-up | 1 cell (slot 1) |
+| ⊞ | 2×2 | 4 cells (slots 1–4) |
+| ⊟ | 4×4 | 16 cells (slots 1–16) |
+
+The selected layout is saved and restored on page refresh.
+
+### Configuring Cells
+
+Hover over any cell to reveal its controls:
+
+- **Unconfigured cell** — shows a **+** prompt; click to add a connection
+- **Configured cell** — shows a **⚙** gear icon; click to edit the IP address, label, or delete the connection
+
+Each cell's configuration dialog has:
+- **IP Address** — the address of the RPi (e.g. `192.168.1.100`)
+- **Label** — optional display name (e.g. "Field 1")
+- **Delete** — removes the connection and returns the cell to unconfigured state
+
+### Zooming In
+
+In 2×2 or 4×4 layout, click any configured cell to zoom it to a full-size view. That cell receives the full FPS budget while zoomed. Click any layout button to return to the grid.
+
+### Global Settings
+
+Click the **⚙** button in the top-right controls to open the settings panel:
+
+- **Max FPS Budget** — total frames per second shared across all active cells (1–16, default 10). The budget is divided equally: 4-up with 4 cells = 4 FPS each at a 16 FPS budget; 16-up with 16 cells = 1 FPS each.
+- **Show labels always** — when enabled, cell labels are always visible; when disabled, labels appear only on hover
+
+### Single RPi Mode
+
+Loading the page with a `?ip=` query parameter (e.g. `https://vextm.tinefamily.com/?ip=192.168.1.100`) opens a temporary single-cell view for that RPi. This mode:
+- Does not read or modify any saved cell configuration
+- Shows an **✕ Exit Single RPi Mode** button in the top-right to return to the normal layout
+
+This is useful for sharing a direct link to a specific RPi with someone who doesn't need the full dashboard.
+
+---
+
+## Local Development
+
+If interesetd in making improvements to this page/project, you'll need:
 - Node.js (version 16 or higher recommended)
-- npm or yarn package manager
+- npm package manager
 
 ## Installation
 
@@ -48,90 +110,73 @@ For development:
    npm install
    ```
 
-## Development
-
 To run the development server:
 
 ```bash
 npm run dev
 ```
 
-The application will be available at `http://localhost:5173` (or the port shown in the terminal).
+The application will be available at `http://localhost:5173`.
+
+### RPi Simulator
+
+For local development and testing without physical hardware, a built-in simulator can stand in for up to 16 RPis:
+
+```bash
+# Start all 16 simulators (ports 4001–4016)
+npm run sim
+
+# Start just 4 simulators (ports 4001–4004)
+npm run sim:4
+
+# Start any number
+node scripts/sim.js 8
+```
+
+Each simulator serves a dynamically generated PNG at `/screen.png` showing a distinct background color, the slot number, an incrementing frame counter, and a moving progress bar — making it easy to verify FPS budgeting and layout behavior visually.
+
+Configure cells in the app using addresses like `localhost:4001`, `localhost:4002`, etc.
 
 ## Building for Production
-
-To build the application as a static web page:
 
 ```bash
 npm run build
 ```
 
-This will create a `dist` folder containing all the static files ready for deployment.
-
-To preview the production build locally:
+This creates a `dist` folder with all static files ready for deployment.
 
 ```bash
-npm run preview
+npm run preview   # preview the production build locally
 ```
 
-## Configuration
+## Configuration Reference
 
-The IP address can be provided in two ways:
-
-1. **URL Query Parameter** (recommended for sharing): Add `?ip=<RPi IP>` to the URL
-   - Example: `https://your-site.com/?ip=192.168.1.100`
-   - When accessed with a query parameter, the application will automatically connect to the specified IP address
-   - This is ideal for sharing links with users - they can simply click the link and it will start working immediately
-
-2. **Manual Entry**: When the web page first starts without a query parameter, it asks the user for the IP address of the Raspberry Pi
-   - The entered IP address is saved to the browser's local storage for future visits
-   - The URL is automatically updated with the query parameter when an IP is entered manually
-
-Once an IP address is provided (via URL or manual entry), the page will attempt to access the `http://<RPi IP>/screen.png` endpoint from the Raspberry Pi:
-  * If successful, it displays the PNG in full viewport mode (filling the entire browser viewport) and continuously fetches new images as fast as possible (immediately after each image finishes loading). The application includes a button to enter browser full-screen mode so the PNG will take up the entire screen.
-  * If unsuccessful, it reports an error to the user
+| localStorage key | Description | Default |
+|---|---|---|
+| `vex-layout` | Active layout (`'1'`, `'4'`, or `'16'`) | `'1'` |
+| `vex-slots` | JSON array of 16 slot configs (`{ip, label}` or `null`) | all null |
+| `vex-fps` | Global FPS budget (1–16) | `10` |
+| `vex-show-labels` | Show labels always (`true`/`false`) | `false` |
 
 ## Deployment
 
-After building the application with `npm run build`, the `dist` folder contains all static files that can be deployed to any web hosting service.
+After building with `npm run build`, the `dist` folder contains all static files deployable to any web host.
 
-### GitHub Pages Deployment
+### GitHub Pages
 
-This repository includes a GitHub Actions workflow that automatically builds and deploys the site to GitHub Pages.
+This repository includes a GitHub Actions workflow that automatically builds and deploys to GitHub Pages on every push to `main`.
 
-**Setup Instructions:**
-
+**Setup:**
 1. Push this repository to GitHub
-2. Go to your repository's **Settings** → **Pages**
-3. Under **Source**, select **GitHub Actions**
-4. The workflow will automatically run on pushes to the `main` branch
-5. Your site will be available at `https://<username>.github.io/<repository-name>/`
+2. Go to **Settings** → **Pages** → set Source to **GitHub Actions**
+3. The site will be available at `https://<username>.github.io/<repository-name>/`
 
-**Manual Deployment:**
-
-You can also manually trigger the deployment workflow:
-1. Go to the **Actions** tab in your repository
-2. Select **Deploy to GitHub Pages** workflow
-3. Click **Run workflow**
-
-**Using the Deployed Site:**
-
-Once deployed, you can share links with the IP address query parameter:
-- `https://<username>.github.io/<repository-name>/?ip=192.168.1.100`
-
-### AWS S3 Deployment
-
-1. Build the application: `npm run build`
-2. Upload the contents of the `dist` folder to an S3 bucket
-3. Configure the S3 bucket for static website hosting
-4. Set the bucket policy to allow public read access
-5. Access the application via the S3 website endpoint
+**Manual trigger:** Go to the **Actions** tab → **Deploy to GitHub Pages** → **Run workflow**
 
 ### Other Hosting Options
 
-The static files in the `dist` folder can also be deployed to:
-- Netlify
-- Vercel
-- Any web server capable of serving static files
+The `dist` folder can be deployed to AWS S3, Netlify, Vercel, or any static file host.
 
-NOTE: This application was created primarily with help from [Cursor](https://cursor.com/).
+---
+
+NOTE: This application was created primarily with help from [Claude Code](https://claude.ai/claude-code).
