@@ -211,6 +211,31 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  transition: opacity 0.2s;
+}
+
+/* hover-visible labels are hidden by default, shown on cell hover */
+.cell-label.hover-visible {
+  opacity: 0;
+}
+
+.cell:hover .cell-label.hover-visible {
+  opacity: 1;
+}
+
+/* ── Suppress all hover effects when cursor is hidden ──────────── */
+.app-root.cursor-hidden .cell:hover .cell-gear {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.app-root.cursor-hidden .cell:hover .cell-add-prompt {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.app-root.cursor-hidden .cell:hover .cell-label.hover-visible {
+  opacity: 0;
 }
 
 /* ── Cell add prompt (unconfigured hover) ──────────────────────── */
@@ -225,10 +250,12 @@
   cursor: pointer;
   opacity: 0;
   transition: opacity 0.2s;
+  pointer-events: none;
 }
 
-.cell-add-prompt.visible {
+.cell:hover .cell-add-prompt {
   opacity: 1;
+  pointer-events: auto;
 }
 
 .cell-add-icon {
@@ -243,8 +270,8 @@
   letter-spacing: 0.05em;
 }
 
-.cell-add-prompt:hover .cell-add-icon,
-.cell-add-prompt:hover .cell-add-text {
+.cell:hover .cell-add-icon,
+.cell:hover .cell-add-text {
   color: rgba(255, 255, 255, 0.8);
 }
 

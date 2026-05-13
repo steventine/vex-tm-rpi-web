@@ -14,7 +14,6 @@ export function CellWrapper({
   onZoom,
   onConfigSave,  // (config | null) => void
 }) {
-  const [isHovered, setIsHovered] = useState(false)
   const [configOpen, setConfigOpen] = useState(false)
 
   const { imageUrl, hasError } = useRpiPoller({
@@ -42,8 +41,6 @@ export function CellWrapper({
     setConfigOpen(false)
   }
 
-  const showLabel = config?.label && (showLabelsAlways || isHovered)
-
   const cellClasses = [
     'cell',
     !config ? 'unconfigured' : '',
@@ -53,12 +50,7 @@ export function CellWrapper({
 
   return (
     <>
-      <div
-        className={cellClasses}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
-        onClick={handleCellClick}
-      >
+      <div className={cellClasses} onClick={handleCellClick}>
         {config ? (
           <>
             <CellImage imageUrl={imageUrl} />
@@ -71,15 +63,17 @@ export function CellWrapper({
                 <span className="cell-error-ip">{config.ip}</span>
               </div>
             )}
-            {showLabel && (
-              <div className="cell-label">{config.label}</div>
+            {config.label && (
+              <div className={`cell-label ${showLabelsAlways ? '' : 'hover-visible'}`}>
+                {config.label}
+              </div>
             )}
             <button className="cell-gear" onClick={handleGearClick} title="Configure">
               ⚙
             </button>
           </>
         ) : (
-          <CellAddPrompt visible={isHovered} onClick={() => setConfigOpen(true)} />
+          <CellAddPrompt onClick={() => setConfigOpen(true)} />
         )}
       </div>
 

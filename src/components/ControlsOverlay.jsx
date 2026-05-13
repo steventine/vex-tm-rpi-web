@@ -3,7 +3,7 @@ import React from 'react'
 const LAYOUTS = [
   { key: '1',  label: '1×1', icon: '▣' },
   { key: '4',  label: '2×2', icon: '⊞' },
-  { key: '16', label: '4×4', icon: '⊟' },
+  { key: '16', label: '4×4', icon: '▦' },
 ]
 
 export function ControlsOverlay({

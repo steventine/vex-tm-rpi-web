@@ -1,12 +1,8 @@
 import React from 'react'
 
-export function CellAddPrompt({ visible, onClick }) {
+export function CellAddPrompt({ onClick }) {
   return (
-    <div
-      className={`cell-add-prompt ${visible ? 'visible' : ''}`}
-      onClick={onClick}
-      title="Add Connection"
-    >
+    <div className="cell-add-prompt" onClick={onClick} title="Add Connection">
       <span className="cell-add-icon">+</span>
       <span className="cell-add-text">Add Connection</span>
     </div>
