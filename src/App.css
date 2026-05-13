@@ -167,7 +167,7 @@
 /* ── Cell gear (CSS-only hover) ────────────────────────────────── */
 .cell-gear {
   position: absolute;
-  top: 0.4rem;
+  bottom: 0.4rem;
   right: 0.4rem;
   background-color: rgba(0, 0, 0, 0.65);
   color: #fff;
@@ -327,8 +327,8 @@
   color: rgba(255, 255, 255, 0.6);
   border: 2px solid rgba(255, 255, 255, 0.2);
   border-radius: 4px;
-  padding: 0.5rem 0.7rem;
-  font-size: 1.1rem;
+  padding: 0.2rem 0.25rem;
+  font-size: 1.4rem;
   cursor: pointer;
   transition: all 0.2s;
   backdrop-filter: blur(4px);
