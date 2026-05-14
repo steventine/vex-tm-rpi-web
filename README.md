@@ -1,18 +1,18 @@
 # VEX Tournament Manager Raspberry Pi Remote Display Client
 
-The VEX Tournament Manager Raspberry Pi is a great tool to have pit displays located at any TVs in a VEX robotics competition venue. However, it's sometimes not feasible to get an HDMI connection to all the TVs, while all the TVs may be capable of displaying a full-screen view from a web browser (like via an attached computer or smartboard).
+The VEX Tournament Manager Raspberry Pi is a great tool to have pit displays located at any TV/projector in a VEX robotics competition venue. However, it's sometimes not feasible to get an HDMI connection to a TV, but the TV may be capable of displaying a full-screen view from a web browser (like via an attached computer, smartboard or remote projection software).
 
-This project provides a static web page using ReactJS that connects to one or more VEX TM Raspberry Pis and continuously fetches and displays their screens via the `http://<RPi IP>/screen.png` endpoint.  This has two primary uses:
+This project provides a static web page using ReactJS that connects to one or more VEX TM Raspberry Pis and continuously fetches and displays their screens via the Raspberry Pi's `http://<RPi IP>/screen.png` endpoint.  This has two primary uses:
 1. Display a single Raspberry Pi as a remote display using a web browser
-2. Monitor up to 16 RPis simultaneously in a configurable grid layout.
+2. Remotely monitor up to 16 RPis simultaneously in a configurable grid layout.
 
 ## Hosted Page
 
-The Remote Display Client can be accessed via this repository's GitHub Site at <https://vextm.tinefamily.com> (or <https://steventine.github.io/vex-tm-rpi-web>).
+This remote display page can be accessed via this repository's GitHub Site at <https://vextm.tinefamily.com> (or <https://steventine.github.io/vex-tm-rpi-web>).
 
-**NOTE:** This is a static web page that has no backend component.  Once loaded in the browser, you don't even need an Internet connection to make it work.
+**NOTE:** This is a static web page that has no backend/server component.  Once the page is loaded in the browser, you don't even need an Internet connection to make it work...all the network traffic to the Raspberry Pi stays local to your venue/network.
 
-To jump directly to a single RPi without any configuration, add its IP address as a query parameter:
+To directly display a single RPi without any configuration, add its IP address as a query parameter:
 `https://vextm.tinefamily.com/?ip=192.168.1.121`
 
 ## Features
@@ -21,7 +21,7 @@ To jump directly to a single RPi without any configuration, add its IP address a
 - **Up to 16 simultaneous RPi connections**, each independently polled
 - **Per-cell configuration** — set an IP address and optional label for each cell
 - **Zoom** — click any cell in a grid view to expand it to full screen; click a layout button to return
-- **FPS budget** — configurable global FPS cap (1–16) split equally across active cells; e.g. 4-up with 4 cells uses 4 FPS each at a 16 FPS budget
+- **FPS budget** — configurable global FPS cap (1–16 FPS) split equally across active cells; e.g. 4-up with 4 cells uses 4 FPS each at a 16 FPS budget
 - **Labels** — optional name per cell, shown always or only on hover (configurable)
 - **Single RPi Mode** — loading the page with `?ip=<address>` opens a session-only single-cell view without affecting saved configuration
 - **Persistent configuration** — layout, IP addresses, labels, and settings are all saved to browser local storage and restored on page refresh
@@ -29,21 +29,61 @@ To jump directly to a single RPi without any configuration, add its IP address a
 - **Health indicator** — configured cells with connection errors show a red outline
 - **Automatic reconnection** — cells retry on error without user intervention
 
-## Screenshots
+# Screenshots
 
-### Configuration Screen
+## Single Pi Remote Viewer Scenario
+
+This scenario is generally used to display a single Raspberry Pi remotely in a web browser when it's not feasible to connect the Pi to the HDMI of the TV/projector.
+
+### Connection Configuration Screen
 ![Configuration Screen](docs/screenshots/configuration-screen.png)
+
 *The initial screen where users enter the IP address of their VEX TM Raspberry Pi*
 
 ### Display Screen
 ![Display Screen](docs/screenshots/display-screen.png)
-*The main display showing the VEX TM screen with controls visible (fullscreen button, configuration button, and FPS counter)*
+*The main display showing the VEX TM screen with controls visible (fullscreen button, configuration button, and layout controls)*
 
 ### Full Screen Mode
 ![Full Screen Mode](docs/screenshots/fullscreen-mode.png)
 *The application in browser full-screen mode for maximum display area*
 
-## Requirements
+## Multi-Pi Remote Monitor Scenario
+
+This scenario is generally used to remotely monitor a number of Raspberry Pis that are located throughout a facility.
+
+### Empty Viewers
+![Empty Viewers](docs/screenshots/empty-viewers.png)
+
+*Initial view lets you put remote Raspberry Pis into the desired location in the grid*
+
+### Configure A Viewer
+![Configuration Screen](docs/screenshots/configuration-screen.png)
+
+*Configuring the connection to a Raspberry Pi*
+
+### 4-up View
+![2x2 View](docs/screenshots/2x2-view.png)
+
+*2x2 view*
+
+### 16-up View
+![4x4 View](docs/screenshots/4x4-view.png)
+
+*4x4 view (I don't have 16 Raspberry Pis, so some in the view are simulated)*
+
+### Unable To Reach a Pi
+![2x2 Failed View](docs/screenshots/2x2-failed-view.png)
+
+*Example of a single Raspberry Pi being unreachable*
+
+### Page Configuration Screen
+![Configuration Screen](docs/screenshots/page-configuration-screen.png)
+
+*Screen where users configure the behavior of the page*
+
+
+# Requirements
 
 - Modern web browser (Chrome or Edge recommended) with JavaScript enabled
 - Network access to the VEX TM Raspberry Pi(s)
