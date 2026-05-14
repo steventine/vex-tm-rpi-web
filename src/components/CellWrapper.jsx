@@ -11,7 +11,9 @@ export function CellWrapper({
   targetFps,
   showLabelsAlways,
   isZoomable,    // true when in 4-up or 16-up and not already zoomed
+  isZoomed,      // true when this cell is currently filling the screen via expand
   onZoom,
+  onUnzoom,
   onConfigSave,  // (config | null) => void
 }) {
   const [configOpen, setConfigOpen] = useState(false)
@@ -22,13 +24,14 @@ export function CellWrapper({
     targetFps,
   })
 
-  const handleCellClick = () => {
-    if (isZoomable && config) onZoom()
-  }
-
   const handleGearClick = (e) => {
     e.stopPropagation()
     setConfigOpen(true)
+  }
+
+  const handleExpandClick = (e) => {
+    e.stopPropagation()
+    onZoom()
   }
 
   const handleConfigSave = (newConfig) => {
@@ -45,12 +48,11 @@ export function CellWrapper({
     'cell',
     !config ? 'unconfigured' : '',
     config && hasError ? 'has-error' : '',
-    isZoomable && config ? 'zoomable' : '',
   ].filter(Boolean).join(' ')
 
   return (
     <>
-      <div className={cellClasses} onClick={handleCellClick}>
+      <div className={cellClasses}>
         {config ? (
           <>
             <CellImage imageUrl={imageUrl} />
@@ -68,9 +70,30 @@ export function CellWrapper({
                 {config.label}
               </div>
             )}
-            <button className="cell-gear" onClick={handleGearClick} title="Configure">
-              ⚙
-            </button>
+            <div className="cell-controls">
+              {isZoomable && (
+                <button className="cell-expand" onClick={handleExpandClick} title="Expand to full screen">
+                  <svg width="1em" height="1em" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                    <circle cx="8" cy="8" r="5"/>
+                    <line x1="12.5" y1="12.5" x2="18" y2="18"/>
+                    <line x1="5.5" y1="8" x2="10.5" y2="8"/>
+                    <line x1="8" y1="5.5" x2="8" y2="10.5"/>
+                  </svg>
+                </button>
+              )}
+              {isZoomed && (
+                <button className="cell-expand" onClick={(e) => { e.stopPropagation(); onUnzoom() }} title="Return to grid">
+                  <svg width="1em" height="1em" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                    <circle cx="8" cy="8" r="5"/>
+                    <line x1="12.5" y1="12.5" x2="18" y2="18"/>
+                    <line x1="5.5" y1="8" x2="10.5" y2="8"/>
+                  </svg>
+                </button>
+              )}
+              <button className="cell-gear" onClick={handleGearClick} title="Configure">
+                ⚙
+              </button>
+            </div>
           </>
         ) : (
           <CellAddPrompt onClick={() => setConfigOpen(true)} />

@@ -11,6 +11,7 @@ export function DashboardGrid({
   globalFps,
   showLabelsAlways,
   onZoom,
+  onUnzoom,
   onSlotChange,
 }) {
   const isZoomed = zoomedSlot !== null
@@ -40,7 +41,9 @@ export function DashboardGrid({
           targetFps={perCellFps}
           showLabelsAlways={showLabelsAlways}
           isZoomable={!isZoomed && layout !== '1'}
+          isZoomed={isZoomed}
           onZoom={() => onZoom(slotIndex)}
+          onUnzoom={onUnzoom}
           onConfigSave={(config) => onSlotChange(slotIndex, config)}
         />
       ))}

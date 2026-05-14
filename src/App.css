@@ -164,11 +164,18 @@
   font-family: monospace;
 }
 
-/* ── Cell gear (CSS-only hover) ────────────────────────────────── */
-.cell-gear {
+/* ── Cell controls (gear + expand, bottom-right) ───────────────── */
+.cell-controls {
   position: absolute;
   bottom: 0.4rem;
   right: 0.4rem;
+  display: flex;
+  gap: 0.25rem;
+  z-index: 2;
+}
+
+.cell-gear,
+.cell-expand {
   background-color: rgba(0, 0, 0, 0.65);
   color: #fff;
   border: 1px solid rgba(255, 255, 255, 0.25);
@@ -179,16 +186,18 @@
   opacity: 0;
   transition: opacity 0.2s;
   pointer-events: none;
-  z-index: 2;
   backdrop-filter: blur(4px);
+  line-height: 1;
 }
 
-.cell:hover .cell-gear {
+.cell:hover .cell-gear,
+.cell:hover .cell-expand {
   opacity: 1;
   pointer-events: auto;
 }
 
-.cell-gear:hover {
+.cell-gear:hover,
+.cell-expand:hover {
   background-color: rgba(0, 0, 0, 0.85);
   border-color: rgba(255, 255, 255, 0.5);
 }
@@ -224,7 +233,8 @@
 }
 
 /* ── Suppress all hover effects when cursor is hidden ──────────── */
-.app-root.cursor-hidden .cell:hover .cell-gear {
+.app-root.cursor-hidden .cell:hover .cell-gear,
+.app-root.cursor-hidden .cell:hover .cell-expand {
   opacity: 0;
   pointer-events: none;
 }

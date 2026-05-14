@@ -48,6 +48,10 @@ function App() {
     setZoomedSlot(slotIndex)
   }
 
+  const handleUnzoom = () => {
+    setZoomedSlot(null)
+  }
+
   const handleSettingsSave = (fps, labelsAlways) => {
     setGlobalFps(fps)
     setShowLabelsAlways(labelsAlways)
@@ -105,6 +109,7 @@ function App() {
         globalFps={globalFps}
         showLabelsAlways={showLabelsAlways}
         onZoom={handleZoom}
+        onUnzoom={handleUnzoom}
         onSlotChange={handleSlotChange}
       />
       <ControlsOverlay
