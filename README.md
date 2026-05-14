@@ -35,6 +35,8 @@ To directly display a single RPi without any configuration, add its IP address a
 
 This scenario is generally used to display a single Raspberry Pi remotely in a web browser when it's not feasible to connect the Pi to the HDMI of the TV/projector.
 
+**Full-disclosure**: This method of displaying the view from a Raspberry Pi is super simple (no software to install, no special hardware, etc) however it is not really optimized.  The image updates at about 1 frame-per-second (FPS) and takes about 2 Mbps of network bandwidth.  It's definitely better than nothing, but it's not super smooth.  I'm working on a [vex-tm-remote-display](https://github.com/steventine/vex-tm-remote-display) project to be more optimal, but it will also be more complex.
+
 ### Connection Configuration Screen
 ![Configuration Screen](docs/screenshots/configuration-screen.png)
 
